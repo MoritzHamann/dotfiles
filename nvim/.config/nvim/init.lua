@@ -80,7 +80,9 @@ vim.opt.hlsearch = false
 vim.opt.shiftwidth = 4
 vim.opt.tabstop = 4
 vim.cmd.colorscheme "catppuccin-macchiato"
--- vim.cmd.colorscheme "tokyonight-moon"
+
+-- setup spaces instead of tabs for python
+vim.g.python_recommended_style = 1
 
 
 -- setup keybindings

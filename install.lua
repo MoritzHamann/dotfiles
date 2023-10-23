@@ -46,16 +46,6 @@ function setupNvim(arch)
 		log("Failed to extract nvim")
 		return
 	end
-
-	-- symlink into ~/.local/bin
-	if arch == "mac" then
-		ln(HOME .. "/nvim_install/nvim-macos/bin/nvim", HOME .. "/.local/bin/nvim")
-	elseif arch == "linux" then
-		ln(HOME .. "/nvim_install/nvim-linux64/bin/nvim", HOME .. "/.local/bin/nvim")
-	end
-
-	-- symlink the config
-	ln(PWD .. "/nvim", HOME .. "/.config/nvim")
 end
 
 
