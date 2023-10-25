@@ -18,7 +18,6 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 
-
 -- setup plugins
 require("lazy").setup({
 	{
@@ -33,7 +32,20 @@ require("lazy").setup({
 	},
 	{
 		"nvim-telescope/telescope.nvim",
-		dependencies = { "nvim-lua/plenary.nvim" }
+		dependencies = { "nvim-lua/plenary.nvim" },
+		opts = {
+			defaults = {
+				file_ignore_patterns = { "node_modules", ".git" },
+			},
+			pickers = {
+				find_files = {
+					hidden = true,
+				},
+				live_grep = {
+					additional_args = { "--hidden" },
+				},
+			}
+		}
 	},
 	{
 		"github/copilot.vim",
@@ -86,5 +98,7 @@ vim.g.python_recommended_style = 1
 
 
 -- setup keybindings
+local builtin = require("telescope.builtin")
 vim.g.mapleader = " "
-vim.api.nvim_set_keymap("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { noremap = true })
+vim.keymap.set('n', "<leader>ff", builtin.find_files, {})
+vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})

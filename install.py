@@ -28,7 +28,7 @@ def download_nvim(arch: str, override):
 
     # make sure the directory does not exist
     if os.path.exists(install_dir):
-        loger.info('nvim_install directory already exists')
+        logger.info('nvim_install directory already exists')
         if override:
             shutil.rmtree(install_dir)
             os.mkdir(install_dir)
@@ -36,10 +36,9 @@ def download_nvim(arch: str, override):
         os.mkdir(install_dir)
 
     # download nvim
-    if arch == "mac":
-        download_url = download_url_mac
-    elif arch == "linux":
-    	download_url = download_url_linux
+    download_url = download_url_mac
+    if arch == "linux":
+        download_url = download_url_linux
     os.system(f'curl -L {download_url} | tar xz -C {install_dir}')
 
     # symlink the executable
@@ -50,12 +49,12 @@ def download_nvim(arch: str, override):
 
 
 def stow_folders(folders: list):
-    for folder in folders_to_stow:
+    for folder in folders:
         subprocess.run(['stow', '--target', HOME, folder], cwd=PWD)
 
 
 def check_dependencies():
-    tools = ['stow', 'curl'] 
+    tools = ['stow', 'curl', 'rg'] 
 
     logger.info('checking dependencies')
     for tool in tools:
@@ -69,7 +68,6 @@ def install():
     check_dependencies()
     #download_nvim('mac', False)
     stow_folders(folders_to_stow)
-
 
 if __name__ == '__main__':
     try:
