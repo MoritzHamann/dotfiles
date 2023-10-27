@@ -21,6 +21,7 @@ folders_to_stow = [
     'bloomberg'
 ]
 
+
 def download_nvim(arch: str, override):
     install_dir = f'{HOME}/nvim_install'
     download_url_mac = "https://github.com/neovim/neovim/releases/download/stable/nvim-macos.tar.gz"
@@ -62,7 +63,6 @@ def check_dependencies():
         result = subprocess.run(['which', tool], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if result.returncode != 0:
             raise InstallException(f'{tool} is not installed')
-
 
 def install():
     check_dependencies()
