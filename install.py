@@ -4,6 +4,7 @@ import logging
 import os
 import subprocess
 import shutil
+import argparse
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
@@ -66,8 +67,13 @@ def check_dependencies():
 
 def install():
     check_dependencies()
-    #download_nvim('mac', False)
+    download_nvim('mac', False)
     stow_folders(folders_to_stow)
+
+
+def parse_args():
+    parser = argparse.ArgumentParser("install dotfiles")
+    parser.add_argument("-a", "--arch", action='store')
 
 if __name__ == '__main__':
     try:
