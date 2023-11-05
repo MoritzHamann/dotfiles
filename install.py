@@ -54,7 +54,6 @@ def stow_folders(folders: list):
     for folder in folders:
         subprocess.run(['stow', '--target', HOME, folder], cwd=PWD)
 
-
 def check_dependencies():
     tools = ['stow', 'curl', 'rg'] 
 
@@ -65,19 +64,23 @@ def check_dependencies():
         if result.returncode != 0:
             raise InstallException(f'{tool} is not installed')
 
-def install():
+def install(arch):
     check_dependencies()
-    download_nvim('mac', False)
+    download_nvim(arch, False)
     stow_folders(folders_to_stow)
 
 
 def parse_args():
-    parser = argparse.ArgumentParser("install dotfiles")
-    parser.add_argument("-a", "--arch", action='store')
+    parser = argparse.ArgumentParser("install.py")
+    parser.add_argument("-a", "--arch", action='store', choices=['mac', 'linux'], required=True)
+    parser.add_argument("-f", "--force", action='store_true')
+    return parser.parse_args()
+
 
 if __name__ == '__main__':
     try:
-        install()
+        args = parse_args()
+        install(args.arch)
     except InstallException as e:
         logger.error(e)
     except Exception as e:

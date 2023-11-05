@@ -26,27 +26,38 @@ require("lazy").setup({
 			}
 		}
 	},
-	{"hrsh7th/cmp-nvim-lsp"},
-	{'L3MON4D3/LuaSnip'},
-	{'hrsh7th/cmp-nvim-lsp-signature-help'},
+	{
+		'nvim-treesitter/nvim-treesitter',
+		build = ":TSUpdate",
+		config = function()
+			local configs = require("nvim-treesitter.configs")
+			configs.setup({
+				ensure_installed = { "cpp", "lua", "typescript", "python", "rust" },
+				sync_install = false,
+				highlight = { enable = true, additional_vim_regex_highlighting = false},
+				indent = { enable = true },  
+			})
+		end
+	},
+	{'hrsh7th/cmp-nvim-lsp'},
 	{
 		"hrsh7th/nvim-cmp",
-		requires = {
+		dependencies = {
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-path",
 			"hrsh7th/cmp-nvim-lsp",
-			'hrsh7th/cmp-nvim-lsp-signature-help',
 			'L3MON4D3/LuaSnip',
 		},
 		opts = function()
 			local cmp = require('cmp')
+			local luasnip = require('luasnip')
 			return {
 				completion = {
 					completeopt = "menu,menuone,noinsert",
 				},
 				snippet = {
 					expand = function(args)
-						require("luasnip").lsp_expand(args.body)
+						luasnip.lsp_expand(args.body)
 					end,
 				},
 				mapping = {
@@ -61,24 +72,17 @@ require("lazy").setup({
 						select = true,
 					}),
 				},
-				sources = {
+				sources = cmp.config.sources({
 					{ name = "nvim_lsp" },
-					{ name = "buffer" },
-					{ name = "path" },
-					{ name = "luasnip"},
-					{ name = 'nvim_lsp_signature_help' }
-				},
+				}, {
+					{ name = 'buffer'}
+				}),
 			}
 		end,
 	},
 	-- {"github/copilot.vim"},
 	{
 		"neovim/nvim-lspconfig",
-		config = function()
-			require("lspconfig").pyright.setup({})
-			require("lspconfig").tsserver.setup({})
-			require("lspconfig").gopls.setup({})
-		end
 	},
 	{
 		"nvim-tree/nvim-tree.lua",
@@ -103,3 +107,21 @@ require("lazy").setup({
 		end,
 	}
 })
+
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
+local lsp_config = require('lspconfig')
+lsp_config['pyright'].setup{
+	capabilities = capabilities
+}
+lsp_config['gopls'].setup{
+	capabilities = capabilities,
+	settings = {
+		gopls = {
+			usePlaceholders = true
+		},
+	}
+}
+lsp_config['rust_analyzer'].setup{
+	capabilities = capabilities
+}
+
