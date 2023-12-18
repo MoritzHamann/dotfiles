@@ -14,7 +14,7 @@ require("lazy").setup({
 		dependencies = { "nvim-lua/plenary.nvim" },
 		opts = {
 			defaults = {
-				file_ignore_patterns = { "node_modules", ".git" },
+				file_ignore_patterns = { ".git", "venv", "node_modules" },
 			},
 			pickers = {
 				find_files = {
@@ -35,18 +35,18 @@ require("lazy").setup({
 				ensure_installed = { "cpp", "lua", "typescript", "python", "rust" },
 				sync_install = false,
 				highlight = { enable = true, additional_vim_regex_highlighting = false},
-				indent = { enable = true },  
+				indent = { enable = true },
 			})
 		end
 	},
-	{'hrsh7th/cmp-nvim-lsp'},
 	{
 		"hrsh7th/nvim-cmp",
 		dependencies = {
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-path",
 			"hrsh7th/cmp-nvim-lsp",
-			'L3MON4D3/LuaSnip',
+			"hrsh7th/cmp-nvim-lua",
+			"L3MON4D3/LuaSnip",
 		},
 		opts = function()
 			local cmp = require('cmp')
@@ -74,20 +74,85 @@ require("lazy").setup({
 				},
 				sources = cmp.config.sources({
 					{ name = "nvim_lsp" },
+				},{
+					{ name = "nvim_lua"},
+					{ name = 'luasnip' }
 				}, {
-					{ name = 'buffer'}
-				}),
+					{ name = 'buffer'},
+					{ name = 'path'}
+				})
 			}
 		end,
 	},
 	-- {"github/copilot.vim"},
 	{
 		"neovim/nvim-lspconfig",
+		config = function()
+			local capabilities = require('cmp_nvim_lsp').default_capabilities()
+			local lsp_config = require('lspconfig')
+			lsp_config['pyright'].setup{
+				capabilities = capabilities,
+				settings = {
+					python = {
+						pythonPath = "./venv/bin/python"
+					}
+				}
+			}
+			lsp_config['gopls'].setup{
+				capabilities = capabilities,
+				settings = {
+					gopls = {
+						usePlaceholders = true
+					},
+				}
+			}
+			lsp_config['rust_analyzer'].setup{
+				capabilities = capabilities
+			}
+			lsp_config['tsserver'].setup({
+				capabilities = capabilities
+			})
+			lsp_config['lua_ls'].setup({
+				capabilities = capabilities,
+				on_init = function(client)
+					local path = client.workspace_folders[1].name
+					if not vim.loop.fs_stat(path..'/.luarc.json') and not vim.loop.fs_stat(path..'/.luarc.jsonc') then
+						client.config.settings = vim.tbl_deep_extend('force', client.config.settings, {
+							Lua = {
+								runtime = {
+									-- Tell the language server which version of Lua you're using
+									-- (most likely LuaJIT in the case of Neovim)
+									version = 'LuaJIT'
+								},
+								-- Make the server aware of Neovim runtime files
+								workspace = {
+									checkThirdParty = false,
+									library = {
+										vim.env.VIMRUNTIME
+										-- "${3rd}/luv/library"
+										-- "${3rd}/busted/library",
+									}
+									-- or pull in all of 'runtimepath'. NOTE: this is a lot slower
+									-- library = vim.api.nvim_get_runtime_file("", true)
+								},
+								completion = {
+									showWord = "Disable"
+								}
+							}
+						})
+
+						client.notify("workspace/didChangeConfiguration", { settings = client.config.settings })
+					end
+					return true
+				end
+			})
+		end
 	},
 	{
 		"nvim-tree/nvim-tree.lua",
 		version = "*",
-		lazy = false,
+		lazy = true,
+		enabled = true,
 		config = function()
 			require("nvim-tree").setup({
 				renderer = {
@@ -108,20 +173,4 @@ require("lazy").setup({
 	}
 })
 
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
-local lsp_config = require('lspconfig')
-lsp_config['pyright'].setup{
-	capabilities = capabilities
-}
-lsp_config['gopls'].setup{
-	capabilities = capabilities,
-	settings = {
-		gopls = {
-			usePlaceholders = true
-		},
-	}
-}
-lsp_config['rust_analyzer'].setup{
-	capabilities = capabilities
-}
 

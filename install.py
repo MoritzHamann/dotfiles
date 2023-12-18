@@ -22,7 +22,6 @@ folders_to_stow = [
     'bloomberg'
 ]
 
-
 def download_nvim(arch: str, override):
     install_dir = f'{HOME}/nvim_install'
     download_url_mac = "https://github.com/neovim/neovim/releases/download/stable/nvim-macos.tar.gz"

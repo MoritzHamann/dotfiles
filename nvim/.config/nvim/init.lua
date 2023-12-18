@@ -1,6 +1,6 @@
 -- disable default netrw file explorer
-vim.g.loaded_netrwPlugin = 1
-vim.g.loaded_netrw = 1
+-- vim.g.loaded_netrwPlugin = 1
+-- vim.g.loaded_netrw = 1
 
 -- ensure lazypath is available
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -16,10 +16,14 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-
 require('plugins')
 require('mappings')
 require('settings')
+
+
+-- local tickets = require("ticket-manager")
+-- tickets.getTickets("asdf")
+-- print(vim.inspect(tickets))
 
 
 
