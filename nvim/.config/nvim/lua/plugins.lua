@@ -87,66 +87,6 @@ require("lazy").setup({
 	-- {"github/copilot.vim"},
 	{
 		"neovim/nvim-lspconfig",
-		config = function()
-			local capabilities = require('cmp_nvim_lsp').default_capabilities()
-			local lsp_config = require('lspconfig')
-			lsp_config['pyright'].setup{
-				capabilities = capabilities,
-				settings = {
-					python = {
-						pythonPath = "./venv/bin/python"
-					}
-				}
-			}
-			lsp_config['gopls'].setup{
-				capabilities = capabilities,
-				settings = {
-					gopls = {
-						usePlaceholders = true
-					},
-				}
-			}
-			lsp_config['rust_analyzer'].setup{
-				capabilities = capabilities
-			}
-			lsp_config['tsserver'].setup({
-				capabilities = capabilities
-			})
-			lsp_config['lua_ls'].setup({
-				capabilities = capabilities,
-				on_init = function(client)
-					local path = client.workspace_folders[1].name
-					if not vim.loop.fs_stat(path..'/.luarc.json') and not vim.loop.fs_stat(path..'/.luarc.jsonc') then
-						client.config.settings = vim.tbl_deep_extend('force', client.config.settings, {
-							Lua = {
-								runtime = {
-									-- Tell the language server which version of Lua you're using
-									-- (most likely LuaJIT in the case of Neovim)
-									version = 'LuaJIT'
-								},
-								-- Make the server aware of Neovim runtime files
-								workspace = {
-									checkThirdParty = false,
-									library = {
-										vim.env.VIMRUNTIME
-										-- "${3rd}/luv/library"
-										-- "${3rd}/busted/library",
-									}
-									-- or pull in all of 'runtimepath'. NOTE: this is a lot slower
-									-- library = vim.api.nvim_get_runtime_file("", true)
-								},
-								completion = {
-									showWord = "Disable"
-								}
-							}
-						})
-
-						client.notify("workspace/didChangeConfiguration", { settings = client.config.settings })
-					end
-					return true
-				end
-			})
-		end
 	},
 	{
 		"nvim-tree/nvim-tree.lua",
@@ -170,7 +110,19 @@ require("lazy").setup({
 				}
 			})
 		end,
-	}
+	},
+    {
+        "numToStr/Comment.nvim",
+        lazy = false,
+        opts = {}
+    },
+    {
+        'folke/neodev.nvim',
+        opts = {}
+    },
+    {
+        'tpope/vim-fugitive'
+    }
 })
 
 

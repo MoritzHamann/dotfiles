@@ -1,7 +1,7 @@
 -- setup keybindings
 local builtin = require("telescope.builtin")
 local api = require("nvim-tree.api")
-
+local commentApi = require("Comment.api")
 
 vim.g.mapleader = " "
 
@@ -10,6 +10,10 @@ vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
 vim.keymap.set('n', '<leader>fb', function() builtin.buffers({show_all_buffers = true}) end, {})
 vim.keymap.set('n', '<C-p>', builtin.git_files, {})
 vim.keymap.set('n', '<C-b>', api.tree.toggle, {})
+
+-- VS Code like comments
+vim.keymap.set('n', '<C-/>', commentApi.toggle.linewise.current)
+vim.keymap.set('v', '<C-/>', commentApi.call('toggle.linewise', 'g@'), {expr=true})
 
 -- install custom directory switcher
 function changeCWD()
