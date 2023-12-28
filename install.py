@@ -15,21 +15,18 @@ PWD = os.path.abspath(os.path.dirname(__file__))
 class InstallException(Exception):
     pass
 
-folders_to_stow = [
-    'nvim',
-    'bin',
-    'personal',
-    'bloomberg'
-]
-
 def download_nvim(arch: str, override):
-    install_dir = f'{HOME}/nvim_install'
+    install_dir = f'{PWD}/nvim_install'
     download_url_mac = "https://github.com/neovim/neovim/releases/download/stable/nvim-macos.tar.gz"
     download_url_linux = "https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.gz"
+    
+    # if install exists and we do not force an override, exit nvim install
+    if os.path.exists(install_dir) and args.force != True:
+        logger.info('nvim_install directory already exists')
+        return
 
     # make sure the directory does not exist
     if os.path.exists(install_dir):
-        logger.info('nvim_install directory already exists')
         if override:
             shutil.rmtree(install_dir)
             os.mkdir(install_dir)
@@ -44,14 +41,18 @@ def download_nvim(arch: str, override):
 
     # symlink the executable
     if arch == "mac":
-        os.system(f'ln -s {install_dir}/nvim-macos/bin/nvim {HOME}/.local/bin')
+        os.system(f'ln -f -s {install_dir}/nvim-macos/bin/nvim {HOME}/.local/bin')
     elif arch == "linux":
-        os.system(f'ln -s {install_dir}/nvim-linux64/bin/nvim {HOME}./local/bin')
+        os.system(f'ln -f -s {install_dir}/nvim-linux64/bin/nvim {HOME}./local/bin')
 
 
-def stow_folders(folders: list):
-    for folder in folders:
-        subprocess.run(['stow', '--target', HOME, folder], cwd=PWD)
+def link_folders_via_stow(dotfile_folders: list):
+    for main_folder in dotfile_folders:
+        stow_folder = os.path.join(main_folder, 'stow')
+        for item in os.listdir(stow_folder):
+            command = ['stow', '-t', HOME, '-d', stow_folder, item]
+            logger.info(f"running `{' '.join(command)}`")
+            subprocess.run(command, cwd=PWD)
 
 def check_dependencies():
     tools = ['stow', 'curl', 'rg'] 
@@ -63,23 +64,27 @@ def check_dependencies():
         if result.returncode != 0:
             raise InstallException(f'{tool} is not installed')
 
-def install(arch):
+def install(args):
     check_dependencies()
-    download_nvim(arch, False)
-    stow_folders(folders_to_stow)
+    download_nvim(args.arch, args.force)
+
+    dotfile_folders = [PWD]
+    dotfile_folders.extend(args.dotfiles)
+    link_folders_via_stow(dotfile_folders)
 
 
 def parse_args():
     parser = argparse.ArgumentParser("install.py")
     parser.add_argument("-a", "--arch", action='store', choices=['mac', 'linux'], required=True)
-    parser.add_argument("-f", "--force", action='store_true')
+    parser.add_argument("-f", "--force", action='store_true', default=False)
+    parser.add_argument('dotfiles', nargs='*', default=[], help='Relative paths to additional dotfiles folders, containing a `stow` folder')
     return parser.parse_args()
 
 
 if __name__ == '__main__':
     try:
         args = parse_args()
-        install(args.arch)
+        install(args)
     except InstallException as e:
         logger.error(e)
     except Exception as e:

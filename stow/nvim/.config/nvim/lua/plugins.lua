@@ -1,4 +1,5 @@
 require("lazy").setup({
+    { "nvim-lua/plenary.nvim" },
 	{
 		"catppuccin/nvim",
 		name = "catppuccin",

@@ -3,8 +3,7 @@ local finders = require("telescope.finders")
 local config = require("telescope.config").values
 local actions = require("telescope.actions")
 local actions_state = require("telescope.actions.state")
-
-
+local job = require("plenary.job")
 
 -- jira json file format
 --	{
@@ -28,9 +27,39 @@ local actions_state = require("telescope.actions.state")
 Cache = nil
 
 function Load_cache()
-	local path = "somepath"
-	-- Cache = vim.json.decode(path)
+    local test_json = [[
+    {
+        "branchMapping": {
+            "0.1.1": ["ENGEQBIS-23455"]
+        }
+    }
+    ]]
+    local cache = vim.json.decode(test_json)
+    local ls = job:new {
+        command = 'sleep',
+        args = {'10'},
+    }
+    local results = ls:start()
+    print(vim.inspect(results))
+
+    local output = {}
+    local job_id = vim.fn.jobstart("ls -l", {
+        on_stdout = function(job_id, data, event)
+            for _, v in ipairs(data) do
+                if v ~= "" then
+                    table.insert(output, v)
+                end
+            end
+        end,
+        on_exit = function(job_id, data, event)
+            for _, v in ipairs(output) do
+                print(v)
+            end
+        end
+    })
 end
+
+Load_cache()
 
 function Get_tickets_for_branch(branch)
 	local tickets = nil
