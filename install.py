@@ -40,10 +40,14 @@ def download_nvim(arch: str, override):
     os.system(f'curl -L {download_url} | tar xz -C {install_dir}')
 
     # symlink the executable
+    command = []
     if arch == "mac":
-        os.system(f'ln -f -s {install_dir}/nvim-macos/bin/nvim {HOME}/.local/bin')
+        command = ['stow', '-t', f"{HOME}/.local/bin", '-d', f"{install_dir}/nvim-macos/", "bin"]
     elif arch == "linux":
-        os.system(f'ln -f -s {install_dir}/nvim-linux64/bin/nvim {HOME}./local/bin')
+        command = ['stow', '-t', f"{HOME}/.local/bin", '-d', f"{install_dir}/nvim-linux64/", "bin"]
+
+    logger.info(f"running `{' '.join(command)}`")
+    subprocess.run(command, cwd=PWD)
 
 
 def link_folders_via_stow(dotfile_folders: list):
