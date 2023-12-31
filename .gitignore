@@ -1,4 +1,6 @@
 lazy-lock.json
 nvim_install
 *_dotfiles
+stow/emacs/.config/emacs/*
+!stow/emacs/.config/emacs/*.el
 
