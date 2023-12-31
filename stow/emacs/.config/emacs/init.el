@@ -34,6 +34,10 @@
   (company-idle-delay 0.3 "A bit faster autocomplete")
   (company-minimum-prefix-length 1 "Provide autocomplete form the first character")
  )
+
+(use-package ivy
+  :ensure t
+)
   
 
 

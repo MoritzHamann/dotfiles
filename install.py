@@ -68,8 +68,30 @@ def check_dependencies():
         if result.returncode != 0:
             raise InstallException(f'{tool} is not installed')
 
+
+def ensure_home_folder_setup():
+    folders_to_create = [
+        ".local",
+        os.path.join(".local", "bin"),
+        ".config",
+        os.path.join(".config", "emacs"),
+        os.path.join(".config", "nvim")
+    ]
+
+    for folder in folders_to_create:
+        full_path = os.path.join(HOME, folder)
+        if os.path.isdir(full_path):
+            logger.info(f"{folder} exists")
+        else:
+            logger.info(f"{folder} does NOT exist")
+            logger.info(f"=> Creating {folder}")
+            os.mkdir(full_path)
+
+
+
 def install(args):
     check_dependencies()
+    ensure_home_folder_setup()
     download_nvim(args.arch, args.force)
 
     dotfile_folders = [PWD]
