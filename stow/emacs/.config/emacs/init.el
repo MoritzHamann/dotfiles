@@ -24,6 +24,10 @@
   :demand
   :ensure t
   :config
+  (evil-set-leader nil (kbd "SPC"))
+  (evil-define-key 'normal 'global (kbd "<leader>pp") 'project-switch-project)
+  (evil-define-key 'normal 'global (kbd "<leader>pf") 'project-find-file)
+  (evil-define-key 'normal 'global (kbd "<leader>pg") 'project-find-regexp)
   (evil-mode 1))
 
 (use-package evil-collection
