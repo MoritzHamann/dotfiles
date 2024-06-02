@@ -17,7 +17,7 @@ class InstallException(Exception):
 
 def download_nvim(arch: str, override):
     install_dir = f'{PWD}/nvim_install'
-    download_url_mac = "https://github.com/neovim/neovim/releases/download/stable/nvim-macos.tar.gz"
+    download_url_mac = "https://github.com/neovim/neovim/releases/download/stable/nvim-macos-arm64.tar.gz"
     download_url_linux = "https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.gz"
     
     # if install exists and we do not force an override, exit nvim install
@@ -42,7 +42,7 @@ def download_nvim(arch: str, override):
     # symlink the executable
     command = []
     if arch == "mac":
-        command = ['stow', '-t', f"{HOME}/.local/bin", '-d', f"{install_dir}/nvim-macos/", "bin"]
+        command = ['stow', '-t', f"{HOME}/.local/bin", '-d', f"{install_dir}/nvim-macos-arm64/", "bin"]
     elif arch == "linux":
         command = ['stow', '-t', f"{HOME}/.local/bin", '-d', f"{install_dir}/nvim-linux64/", "bin"]
 

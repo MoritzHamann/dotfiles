@@ -3,15 +3,12 @@
 require("neodev").setup({})
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 local lsp_config = require('lspconfig')
+local util = require('lspconfig.util')
 
 -- Python config
 lsp_config['pyright'].setup{
     capabilities = capabilities,
-    settings = {
-        python = {
-            pythonPath = "./venv/bin/python"
-        }
-    }
+    settings = {}
 }
 
 -- Go config
@@ -31,6 +28,39 @@ lsp_config['rust_analyzer'].setup{
 
 -- TS config
 lsp_config['tsserver'].setup({
+    capabilities = capabilities
+})
+
+-- gleam
+lsp_config['gleam'].setup({
+    capabilities = capabilities
+})
+
+lsp_config['sourcekit'].setup({
+    capabilities = capabilities
+})
+
+lsp_config["ionide"].setup({
+    -- capabilities = capabilities,
+    cmd = { 'fsautocomplete', '--adaptive-lsp-server-enabled' },
+    root_dir = util.root_pattern('*.sln', '*.fsproj', '.git'),
+    filetypes = { 'fsharp' },
+    init_options = {
+      AutomaticWorkspaceInit = true,
+    },
+})
+
+lsp_config['jdtls'].setup({
+    cmd = {
+        "/Users/moe/Projects/jdt-language-server-latest/bin/jdtls",
+        "-configuration",
+        "/Users/moe/.cache/jdtls/config",
+        "-data",
+        "/Users/moe/.cache/jdtls/workspace"
+    }
+})
+
+lsp_config['zls'].setup({
     capabilities = capabilities
 })
 

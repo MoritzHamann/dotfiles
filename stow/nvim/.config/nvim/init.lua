@@ -20,6 +20,7 @@ require('plugins')
 require('local_lsp')
 require('mappings')
 require('settings')
+require("python")
 
 
 -- local tickets = require("ticket-manager")

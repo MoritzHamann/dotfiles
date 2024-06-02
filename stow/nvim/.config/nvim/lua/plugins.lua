@@ -3,12 +3,9 @@ require("lazy").setup({
 	{
 		"catppuccin/nvim",
 		name = "catppuccin",
-		priority = 1000,
-	},
-	{
-		"folke/tokyonight.nvim",
-		lazy = false,
-		priority = 1000,
+        opts = {
+            transparent_background = true
+        }
 	},
 	{
 		"nvim-telescope/telescope.nvim",
@@ -24,16 +21,28 @@ require("lazy").setup({
 				live_grep = {
 					additional_args = { "--hidden" },
 				},
-			}
+			},
+            extensions = {
+                project = {
+                    base_dirs = {'~/Projects/'},
+                    hidden_files = true
+                }
+            }
 		}
 	},
+    {
+        'nvim-telescope/telescope-project.nvim',
+        config = function()
+            require('telescope').load_extension("project")
+        end
+    },
 	{
 		'nvim-treesitter/nvim-treesitter',
 		build = ":TSUpdate",
 		config = function()
 			local configs = require("nvim-treesitter.configs")
 			configs.setup({
-				ensure_installed = { "cpp", "lua", "typescript", "python", "rust" },
+				ensure_installed = { "cpp", "lua", "typescript", "python", "rust", "go"},
 				sync_install = false,
 				highlight = { enable = true, additional_vim_regex_highlighting = false},
 				indent = { enable = true },
@@ -69,7 +78,7 @@ require("lazy").setup({
 					["<C-Space>"] = cmp.mapping.complete(),
 					["<C-e>"] = cmp.mapping.close(),
 					["<CR>"] = cmp.mapping.confirm({
-						behavior = cmp.ConfirmBehavior.Replace,
+						behavior = cmp.ConfirmBehavior.Insert,
 						select = true,
 					}),
 				},
@@ -85,7 +94,6 @@ require("lazy").setup({
 			}
 		end,
 	},
-	-- {"github/copilot.vim"},
 	{
 		"neovim/nvim-lspconfig",
 	},
@@ -123,7 +131,28 @@ require("lazy").setup({
     },
     {
         'tpope/vim-fugitive'
-    }
+    },
+    {
+        "lukas-reineke/indent-blankline.nvim",
+        main = "ibl",
+        config = function()
+            require("ibl").setup({
+                scope = { enabled = false}
+            })
+        end
+    },
+    {
+        "lewis6991/gitsigns.nvim",
+        config = function()
+            require('gitsigns').setup()
+        end
+    },
+    -- {"janet-lang/janet.vim"},
+    {
+        'ionide/Ionide-vim',
+        enabled = true
+    },
+    -- {'gleam-lang/gleam.vim'},
 })
 
 
