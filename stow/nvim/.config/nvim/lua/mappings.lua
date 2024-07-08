@@ -3,7 +3,7 @@ local builtin = require("telescope.builtin")
 local utils = require("telescope.utils")
 local api = require("nvim-tree.api")
 local commentApi = require("Comment.api")
-
+local trouble = require("trouble")
 vim.g.mapleader = " "
 
 
@@ -51,17 +51,17 @@ vim.keymap.set('n', '<C-b>', api.tree.toggle, {})
 vim.keymap.set('n', '<C-/>', commentApi.toggle.linewise.current)
 vim.keymap.set('v', '<C-/>', commentApi.call('toggle.linewise', 'g@'), { expr = true })
 
--- Project fuzzy find
-
--- function changeCWD()
--- 	vim.ui.input({prompt="Change to Project: ", completion="dir"}, function(directory)
--- 		if directory then
--- 			vim.api.nvim_set_current_dir(directory)
--- 		end
--- 	end)
--- end
+-- project switching
 vim.keymap.set('n', '<leader>fp', function()
     require('telescope').extensions.project.project({})
+end, {})
+
+-- diagnostics via trouble
+vim.keymap.set('n', '<leader>do', function()
+    trouble.toggle({
+        mode = "diagnostics",
+        focus = true,
+    })
 end, {})
 
 -- set up lsp keybindings
@@ -73,6 +73,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         local opts = { buffer = ev.buf }
         vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+        vim.keymap.set('n', 'gt', vim.lsp.buf.type_definition, opts)
         vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
         vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
         vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
@@ -81,7 +82,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         vim.keymap.set('n', '<leader>wl', function()
             print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
         end, opts)
-        vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, opts)
+        vim.keymap.set('n', '<leader>H', vim.lsp.buf.typehierarchy, opts)
         vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
         vim.keymap.set({ 'n', 'v' }, '<leader>ca', vim.lsp.buf.code_action, opts)
         vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)

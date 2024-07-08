@@ -22,3 +22,8 @@ vim.opt.foldenable = false
 -- colorscheme
 vim.cmd.colorscheme "catppuccin-mocha"
 
+-- plugin specific
+
+-- omnisharp
+vim.g.OmniSharp_server_use_net6 = 1
+
